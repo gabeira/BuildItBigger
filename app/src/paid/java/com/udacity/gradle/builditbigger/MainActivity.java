@@ -8,15 +8,20 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.udacity.android.JokeActivity;
 
 public class MainActivity extends ActionBarActivity implements EndpointsAsyncTask.Callback {
 
+    private ProgressBar progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progress = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     @Override
@@ -42,6 +47,7 @@ public class MainActivity extends ActionBarActivity implements EndpointsAsyncTas
     }
 
     public void tellJoke(View view) {
+        progress.setVisibility(View.VISIBLE);
         new EndpointsAsyncTask(this).execute(new Pair<Context, String>(this, "this is a paid joke"));
     }
 
@@ -50,5 +56,6 @@ public class MainActivity extends ActionBarActivity implements EndpointsAsyncTas
         Intent intent = new Intent(this, JokeActivity.class);
         intent.putExtra(JokeActivity.JOKE_KEY, result);
         startActivity(intent);
+        progress.setVisibility(View.GONE);
     }
 }

@@ -1,18 +1,19 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.udacity.android.JokeActivity;
 import com.udacity.java.Jokes;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements EndpointsAsyncTask.Callback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +46,14 @@ public class MainActivity extends ActionBarActivity {
 
     public void tellJoke(View view) {
         Jokes jokes = new Jokes();
-        Intent intent = new Intent(this, JokeActivity.class);
-        intent.putExtra(JokeActivity.JOKE_KEY, jokes.getJoke());
-        startActivity(intent);
+        new EndpointsAsyncTask(this).execute(new Pair<Context, String>(this, jokes.getJoke()));
     }
 
 
+    @Override
+    public void onLoadJokeFromGCE(String result) {
+        Intent intent = new Intent(this, JokeActivity.class);
+        intent.putExtra(JokeActivity.JOKE_KEY, result);
+        startActivity(intent);
+    }
 }

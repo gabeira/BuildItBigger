@@ -18,7 +18,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors{
+    productFlavors {
         free {
             applicationId "com.udacity.gradle.builditbigger.free"
         }
@@ -38,3 +38,16 @@ dependencies {
     compile project(":jokedisplay")
     paidCompile project(path: ':backend', configuration: 'android-endpoints')
 }
+
+task testAppEngineGCE(dependsOn: ':backend:appengineRun') {
+    description "Run tests with App Engine Google Cloud Endpoints."
+    group "verification"
+    project(':backend').afterEvaluate { backend ->
+        backend.extensions.appengine.daemon = true
+    }
+    doFirst {
+        println 'Running tests'
+        tasks.test.execute()
+    }
+}
+tasks.testAppEngineGCE.finalizedBy ':backend:appengineStop'
